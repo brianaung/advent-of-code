@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"sort"
 	"strings"
 )
 
@@ -39,10 +38,12 @@ func partone(lines []string) {
 }
 
 func parttwo(lines []string) {
-	matches := make(map[int]int)
+	instances := make(map[int]int)
 	for i, line := range lines {
+		instances[i] += 1 // original card
 		a := strings.Split(strings.Split(line, ":")[1], "|")
 		win, mine := strings.Split(a[0], " "), strings.Split(a[1], " ")
+		// find matches
 		winset := make(map[string]bool, len(win)-1)
 		for _, w := range win {
 			if len(w) > 0 {
@@ -55,26 +56,9 @@ func parttwo(lines []string) {
 				numMatch++
 			}
 		}
-		matches[i] = numMatch
-	}
-
-	// to loop the matches map in order
-	keys := make([]int, 0)
-	for k := range matches {
-		keys = append(keys, k)
-	}
-	sort.Ints(keys)
-	// init instances map
-	instances := make(map[int]int)
-	for i := 0; i < len(keys); i++ {
-		instances[i] = 1
-	}
-	for _, k := range keys {
-		count := 0
-		// update instances for the next "matches[k] (i.e. no. instances of curr card)" cards
-		for count < matches[k] {
-			instances[k+count+1] += instances[k]
-			count++
+		// update instances for next cards
+		for j := 0; j < numMatch; j++ {
+			instances[i+j+1] += instances[i]
 		}
 	}
 	sum := 0
