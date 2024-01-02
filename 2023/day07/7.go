@@ -13,7 +13,6 @@ func main() {
 	data, _ := os.ReadFile(os.Args[1])
 
 	handmap := make(map[string]int)
-
 	for _, line := range strings.Split(strings.TrimSpace(string(data)), "\n") {
 		fields := strings.Fields(line)
 		hand := string(fields[0])
@@ -25,23 +24,23 @@ func main() {
 	for k := range handmap {
 		hands = append(hands, k)
 	}
-
+	// sort hands based on their strength
 	sort.Slice(hands, func(i, j int) bool {
 		h1 := strings.Split(hands[i], "")
 		h2 := strings.Split(hands[j], "")
-		if strength(h1) < strength(h2) {
+		if strength(h1) < strength(h2) { // first ordering rule
 			return true
-		} else if strength(h1) == strength(h2) {
+		} else if strength(h1) == strength(h2) { // second ordering rule
 			return replacecard(h1) < replacecard(h2)
 		}
 		return false
 	})
 
-	p1 := 0
+	total := 0
 	for i, h := range hands {
-		p1 += handmap[h] * (i + 1)
+		total += handmap[h] * (i + 1)
 	}
-	fmt.Println(p1)
+	fmt.Println(total)
 }
 
 func replacecard(hand []string) string {
@@ -56,7 +55,7 @@ func replacecard(hand []string) string {
 			ret += "C"
 		case "J":
 			// ret += "B" // part 1
-			ret += "1" // part 2
+			ret += "1" // part 2 (J is the weakest)
 		case "T":
 			ret += "A"
 		default:
